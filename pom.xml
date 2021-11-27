@@ -6,9 +6,9 @@
 
     <!-- 项目信息 begin -->
     <groupId>com.microservice</groupId>
-    <artifactId>spring-web</artifactId>
+    <artifactId>myspringboot</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>spring-web</name>
+    <name>myspringboot</name>
     <url>http://maven.apache.org</url>
     <!-- 项目信息end -->
     <!-- 属性配置 begin -->
@@ -159,13 +159,6 @@
             <artifactId>xxl-job-core</artifactId>
             <version>2.3.0</version>
         </dependency>
-
-        <dependency>
-            <groupId>com.microservice</groupId>
-            <artifactId>spring-web</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
-        </dependency>
-
 
     </dependencies>
 

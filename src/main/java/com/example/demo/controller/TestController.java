@@ -3,24 +3,13 @@ package com.example.demo.controller;
 import com.alibaba.druid.util.StringUtils;
 import com.example.demo.entity.*;
 import com.example.demo.entity.Vo.Person;
-import com.example.demo.entity.annotation.Validate;
-import com.example.demo.service.CommodityOrderService;
 import com.example.demo.service.UserService;
-import com.example.demo.utils.BarCodeUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
-import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -34,25 +23,10 @@ import java.util.*;
 @RequestMapping("/aa")
 public class TestController {
 
-    @Autowired
-    CommodityOrderService commodityOrderService ;
 
     @Autowired
     UserService userService ;
 
-//    @RequestMapping(value="/a" ,method=RequestMethod.POST , produces = "application/json;charset=UTF-8")
-//    public String a(@RequestBody User user,BindingResult br){
-//        if (br.hasErrors()){
-//            List<ObjectError> allErrors = br.getAllErrors();
-//            ObjectError objectError = allErrors.get(0);
-//            System.out.println(objectError.getDefaultMessage());
-//            System.out.println(objectError.getObjectName());
-//            System.out.println(allErrors);
-//            return objectError.getDefaultMessage() ;
-//        }
-//        return  "成功";
-//    }
-//
 
     @PostMapping(value="a" ,produces = "application/json;charset=UTF-8")
     @ResponseBody
