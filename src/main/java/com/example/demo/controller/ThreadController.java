@@ -4,9 +4,12 @@ package com.example.demo.controller;
 import com.example.demo.entity.Boy;
 import com.example.demo.entity.ThreadResponse.ThreadResponse;
 import com.example.demo.entity.exception.BizException;
+import com.example.demo.mapper.BoyMapper;
 import com.example.demo.service.AsyncService;
 import com.example.demo.service.BoySerivce;
+import com.example.demo.thread.BoyStatisticsTask;
 import com.example.demo.thread.MyTask;
+import com.example.demo.utils.SqlUtils;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +22,10 @@ import org.springframework.util.concurrent.SuccessCallback;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.time.Duration;
+import java.time.Instant;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -56,6 +62,11 @@ public class ThreadController {
     BoySerivce boySerivce ;
 
 
+    @Autowired
+    BoyMapper boyMapper ;
+
+
+
 
 
 
@@ -81,6 +92,22 @@ public class ThreadController {
     }
 
 
+
+    /**
+     *
+     *
+     *
+     * 功能描述  ：
+     *     接口经常超时？（大接口，数据量大的情况：化整为零的思想）线程池+ FutureTask来解决！
+     *
+     *
+     * 原理：FutureTask执行的结果会放入它的私有变量outcome中，
+     *           其他线程直接调用futureTask.get()去读取该变量即可
+     * @author guoyiguang
+     * @date 2022/9/13
+     * @param
+     * @return
+     */
     @PostMapping(value="a" )
     @ResponseBody
     public String a() throws ExecutionException, InterruptedException {
@@ -105,6 +132,79 @@ public class ThreadController {
         }
         return  sb.toString();
     }
+
+
+
+    /**
+     *
+     *
+     *
+     * 功能描述  ：
+     *     接口经常超时？（大接口，数据量大的情况：化整为零的思想）线程池+ FutureTask来解决！
+     *
+     *
+     * 原理：FutureTask执行的结果会放入它的私有变量outcome中，
+     *           其他线程直接调用futureTask.get()去读取该变量即可
+     * @author guoyiguang
+     * @date 2022/9/13
+     * @param
+     * @return
+     */
+    @PostMapping(value="aV1" )
+    @ResponseBody
+    public  List<Boy> aV1() throws ExecutionException, InterruptedException {
+        Instant start = Instant.now();
+        //封装结果
+        List<Boy> result =new ArrayList<>();
+
+        //任务列表
+        List<FutureTask<List<Boy>>> taskList=new ArrayList<FutureTask<List<Boy>>>();
+        int count = boyMapper.getCount();
+        int pageSize = 10;
+        int cnt = SqlUtils.getForCount1(count, pageSize);
+        for(int i=0;i<cnt;i++){
+            //创建cnt个任务放入【任务列表】
+            BoyStatisticsTask boyStatisticsTask = new BoyStatisticsTask(i*pageSize,pageSize);
+            FutureTask<List<Boy>> futureTask=new FutureTask<List<Boy>>(boyStatisticsTask);
+            //执行的结果装回原来的FutureTask中,后续直接遍历集合taskList来获取结果即可
+            //  futureTask 有返回结果的属性
+            taskList.add(futureTask);
+            excutor.submit(futureTask);
+        }
+        //获取结果
+        try{
+            for(FutureTask<List<Boy>> futureTask:taskList){
+                List<Boy> boys = futureTask.get();
+                result.addAll(boys);
+            }
+        } catch (InterruptedException e) {
+            log.error("线程执行被中断",e);
+        } catch (ExecutionException e) {
+            log.error("线程执行出现异常",e);
+        }
+        //关闭线程池
+        //excutor.shutdown();
+
+        Instant end = Instant.now();
+        System.out.println("耗费时间"+ Duration.between( start,end ).toMillis());
+        return result;
+
+    }
+
+
+    @PostMapping(value="aV2" )
+    @ResponseBody
+    public  List<Boy> aV2() throws ExecutionException, InterruptedException {
+        Instant start = Instant.now();
+        List<Boy> result = boyMapper.getList4();
+        Instant end = Instant.now();
+        System.out.println("耗费时间"+ Duration.between( start,end ).toMillis());
+        return result;
+
+    }
+
+
+
 
 
     @PostMapping(value="b" )

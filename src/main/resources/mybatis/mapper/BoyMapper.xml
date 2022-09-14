@@ -51,8 +51,26 @@
 
     </select>
 
+    <select id ='getList3'   resultMap="BaseResultMap">
+        select  *
+        from boys order by id limit #{pageSize} offset #{offSet}
+    </select>
+
+    <select id ='getList4'   resultMap="BaseResultMap">
+        select  *
+        from boys order by id
+
+    </select>
+
+
+    <select id ='getCount'   resultType="java.lang.Integer">
+        select  count(*)
+        from boys
+    </select>
 
 
 
 
- </mapper>
+
+
+</mapper>
